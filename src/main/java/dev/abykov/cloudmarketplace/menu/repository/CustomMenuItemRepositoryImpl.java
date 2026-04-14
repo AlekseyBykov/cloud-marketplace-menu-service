@@ -38,14 +38,14 @@ public class CustomMenuItemRepositoryImpl implements CustomMenuItemRepository {
             UpdateMenuItemRequest request
     ) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaUpdate<MenuItem> update = cb.createCriteriaUpdate(MenuItem.class);
-        Root<MenuItem> root = update.from(MenuItem.class);
+        CriteriaUpdate<MenuItem> updateQuery = cb.createCriteriaUpdate(MenuItem.class);
+        Root<MenuItem> root = updateQuery.from(MenuItem.class);
 
-        fieldUpdaters.forEach(updater -> updater.apply(update, request));
+        fieldUpdaters.forEach(updater -> updater.apply(updateQuery, request));
 
-        update.where(cb.equal(root.get(MenuItem_.id), id));
+        updateQuery.where(cb.equal(root.get(MenuItem_.id), id));
 
-        int updatedCount = entityManager.createQuery(update).executeUpdate();
+        int updatedCount = entityManager.createQuery(updateQuery).executeUpdate();
 
         // Синхронизация persistence context
         entityManager.flush();
@@ -60,14 +60,14 @@ public class CustomMenuItemRepositoryImpl implements CustomMenuItemRepository {
             MenuItemSort sort
     ) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<MenuItem> query = cb.createQuery(MenuItem.class);
-        Root<MenuItem> root = query.from(MenuItem.class);
+        CriteriaQuery<MenuItem> selectQuery = cb.createQuery(MenuItem.class);
+        Root<MenuItem> root = selectQuery.from(MenuItem.class);
 
-        query.select(root)
+        selectQuery.select(root)
                 .where(cb.equal(root.get(MenuItem_.category), category))
                 .orderBy(sort.toOrder(cb, root));
 
-        TypedQuery<MenuItem> typedQuery = entityManager.createQuery(query);
+        TypedQuery<MenuItem> typedQuery = entityManager.createQuery(selectQuery);
         return typedQuery.getResultList();
     }
 }

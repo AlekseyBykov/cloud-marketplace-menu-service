@@ -47,8 +47,8 @@ public abstract class AbstractRepositoryTest {
     protected <T, R> void assertElementsInOrder(
             List<T> items,
             Function<T, R> mapper,
-            List<R> expectedElements) {
-
+            List<R> expectedElements
+    ) {
         List<R> actual = items.stream()
                 .map(mapper)
                 .toList();

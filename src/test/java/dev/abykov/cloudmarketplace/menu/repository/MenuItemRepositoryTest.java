@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class MenuItemRepositoryTest extends AbstractRepositoryTest {
 
     @Autowired
-    private MenuItemRepository menuItemRepository;
+    private MenuItemRepository repository;
 
     @Disabled
     @Test
@@ -35,11 +35,11 @@ class MenuItemRepositoryTest extends AbstractRepositoryTest {
         UpdateMenuItemRequest request = TestDataFactory.fullUpdateRequest();
         Long id = getIdByName("Flat White");
 
-        int updateCount = menuItemRepository.updateMenuItem(id, request);
+        int updateCount = repository.updateMenuItem(id, request);
 
         assertThat(updateCount).isEqualTo(1);
 
-        MenuItem updated = menuItemRepository.findById(id).orElseThrow();
+        MenuItem updated = repository.findById(id).orElseThrow();
         assertFieldsEquality(updated, request,
                 "name", "description", "price",
                 "preparationTime", "imageUrl", "weight");
@@ -47,7 +47,7 @@ class MenuItemRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     void updateMenuItem_updatesOnlyProvidedFields_whenPartialRequestProvided() {
-        UpdateMenuItemRequest request = UpdateMenuItemRequest.builder()
+        var request = UpdateMenuItemRequest.builder()
                 .price(BigDecimal.valueOf(18.99))
                 .description("Updated description")
                 .imageUrl("https://images.cloudmarketplace.dev/updated-flat-white.png")
@@ -55,11 +55,11 @@ class MenuItemRepositoryTest extends AbstractRepositoryTest {
 
         Long id = getIdByName("Flat White");
 
-        int updateCount = menuItemRepository.updateMenuItem(id, request);
+        int updateCount = repository.updateMenuItem(id, request);
 
         assertThat(updateCount).isEqualTo(1);
 
-        MenuItem updated = menuItemRepository.findById(id).orElseThrow();
+        MenuItem updated = repository.findById(id).orElseThrow();
         assertFieldsEquality(updated, request,
                 "price", "description", "imageUrl");
     }
@@ -67,13 +67,13 @@ class MenuItemRepositoryTest extends AbstractRepositoryTest {
     @Disabled
     @Test
     void updateMenuItem_throwsException_whenNameIsNotUnique() {
-        UpdateMenuItemRequest request = UpdateMenuItemRequest.builder()
+        var request = UpdateMenuItemRequest.builder()
                 .name("Berry Smoothie") // уже существует
                 .build();
 
         Long id = getIdByName("Flat White");
 
-        assertThatThrownBy(() -> menuItemRepository.updateMenuItem(id, request))
+        assertThatThrownBy(() -> repository.updateMenuItem(id, request))
                 .isInstanceOfAny(DataIntegrityViolationException.class, JpaSystemException.class);
     }
 
@@ -81,14 +81,14 @@ class MenuItemRepositoryTest extends AbstractRepositoryTest {
     void updateMenuItem_returnsZero_whenMenuItemDoesNotExist() {
         UpdateMenuItemRequest request = TestDataFactory.fullUpdateRequest();
 
-        int updateCount = menuItemRepository.updateMenuItem(9999L, request);
+        int updateCount = repository.updateMenuItem(9999L, request);
 
         assertThat(updateCount).isEqualTo(0);
     }
 
     @Test
     void findAllByCategorySorted_returnsDrinks_sortedByPriceAsc() {
-        List<MenuItem> drinks = menuItemRepository
+        List<MenuItem> drinks = repository
                 .findAllByCategorySorted(Category.DRINKS, MenuItemSort.PRICE_ASC);
 
         assertThat(drinks).hasSize(3);
@@ -98,7 +98,7 @@ class MenuItemRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     void findAllByCategorySorted_returnsDrinks_sortedByPriceDesc() {
-        List<MenuItem> drinks = menuItemRepository
+        List<MenuItem> drinks = repository
                 .findAllByCategorySorted(Category.DRINKS, MenuItemSort.PRICE_DESC);
 
         assertThat(drinks).hasSize(3);
@@ -108,7 +108,7 @@ class MenuItemRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     void findAllByCategorySorted_returnsDrinks_sortedByNameAsc() {
-        List<MenuItem> drinks = menuItemRepository
+        List<MenuItem> drinks = repository
                 .findAllByCategorySorted(Category.DRINKS, MenuItemSort.NAME_ASC);
 
         assertThat(drinks).hasSize(3);
@@ -118,7 +118,7 @@ class MenuItemRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     void findAllByCategorySorted_returnsDrinks_sortedByNameDesc() {
-        List<MenuItem> drinks = menuItemRepository
+        List<MenuItem> drinks = repository
                 .findAllByCategorySorted(Category.DRINKS, MenuItemSort.NAME_DESC);
 
         assertThat(drinks).hasSize(3);
