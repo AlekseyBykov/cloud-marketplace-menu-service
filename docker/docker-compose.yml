@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16.1
+    container_name: cloud-marketplace-postgres
+    ports:
+      - "15432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: menu_service_db
+    volumes:
+      - ./postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d menu_service_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
