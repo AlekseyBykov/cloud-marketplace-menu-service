@@ -1,7 +1,7 @@
 package dev.abykov.cloudmarketplace.menu.dto;
 
 import dev.abykov.cloudmarketplace.menu.entity.MenuItem;
-import dev.abykov.cloudmarketplace.menu.storage.entity.MenuItem_;
+import dev.abykov.cloudmarketplace.menu.entity.MenuItem_;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Root;
@@ -26,6 +26,20 @@ public enum MenuItemSort {
         @Override
         public Order toOrder(CriteriaBuilder cb, Root<MenuItem> root) {
             return cb.asc(root.get(MenuItem_.name));
+        }
+    },
+
+    NAME_DESC {
+        @Override
+        public Order toOrder(CriteriaBuilder cb, Root<MenuItem> root) {
+            return cb.desc(root.get(MenuItem_.name));
+        }
+    },
+
+    CREATED_AT_ASC {
+        @Override
+        public Order toOrder(CriteriaBuilder cb, Root<MenuItem> root) {
+            return cb.asc(root.get(MenuItem_.createdAt));
         }
     },
 

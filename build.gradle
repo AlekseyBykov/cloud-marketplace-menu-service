@@ -22,52 +22,58 @@ repositories {
 }
 
 ext {
-	jpaModelGenVersion = '6.5.0.Final'
 	hypersistenceVersion = '3.7.5'
 	mapstructVersion = '1.5.5.Final'
 	mapstructLombokBindingVersion = '0.2.0'
 	springdocVersion = '2.5.0'
+	testcontainersVersion = '2.0.3'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+	}
 }
 
 dependencies {
-	// Spring Boot starters
+	// -------------------- Spring Boot --------------------
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-	// Database & migrations
+	// -------------------- Database --------------------
 	implementation 'org.flywaydb:flyway-core'
 	runtimeOnly 'org.postgresql:postgresql'
 
-	// JSONB support for PostgreSQL
+	// -------------------- JSONB --------------------
 	implementation "io.hypersistence:hypersistence-utils-hibernate-63:${hypersistenceVersion}"
 
-	// Mapping
+	// -------------------- MapStruct --------------------
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
-
-	// OpenAPI / Swagger
-	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}"
-
-	// Lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-
-	// JPA Metamodel
-	annotationProcessor "org.hibernate:hibernate-jpamodelgen:${jpaModelGenVersion}"
-
-	// MapStruct processors
 	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${mapstructLombokBindingVersion}"
 
-	// Tests
+	// -------------------- Lombok --------------------
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// -------------------- JPA Static Metamodel --------------------
+	annotationProcessor "org.hibernate.orm:hibernate-jpamodelgen"
+
+	// -------------------- OpenAPI --------------------
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}"
+
+	// -------------------- Testing --------------------
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+
+	// Явно указываем модули Testcontainers (версии берутся из BOM)
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:postgresql'
-	testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+	environment "TESTCONTAINERS_RYUK_DISABLED", "true"
 }

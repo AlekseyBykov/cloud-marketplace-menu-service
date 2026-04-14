@@ -1,7 +1,7 @@
 package dev.abykov.cloudmarketplace.menu.repository.updater;
 
 import dev.abykov.cloudmarketplace.menu.dto.UpdateMenuItemRequest;
-import dev.abykov.cloudmarketplace.menu.storage.entity.MenuItem_;
+import dev.abykov.cloudmarketplace.menu.entity.MenuItem_;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

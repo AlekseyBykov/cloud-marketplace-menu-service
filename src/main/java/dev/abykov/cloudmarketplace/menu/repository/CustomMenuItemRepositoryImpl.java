@@ -4,7 +4,7 @@ import dev.abykov.cloudmarketplace.menu.dto.MenuItemSort;
 import dev.abykov.cloudmarketplace.menu.dto.UpdateMenuItemRequest;
 import dev.abykov.cloudmarketplace.menu.entity.Category;
 import dev.abykov.cloudmarketplace.menu.entity.MenuItem;
-import dev.abykov.cloudmarketplace.menu.storage.entity.MenuItem_;
+import dev.abykov.cloudmarketplace.menu.entity.MenuItem_;
 import dev.abykov.cloudmarketplace.menu.repository.updater.MenuItemFieldUpdater;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
