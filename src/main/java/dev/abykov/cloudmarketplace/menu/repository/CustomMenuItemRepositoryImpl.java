@@ -45,7 +45,13 @@ public class CustomMenuItemRepositoryImpl implements CustomMenuItemRepository {
 
         update.where(cb.equal(root.get(MenuItem_.id), id));
 
-        return entityManager.createQuery(update).executeUpdate();
+        int updatedCount = entityManager.createQuery(update).executeUpdate();
+
+        // Синхронизация persistence context
+        entityManager.flush();
+        entityManager.clear();
+
+        return updatedCount;
     }
 
     @Override

@@ -18,7 +18,7 @@ INSERT INTO menu_items (
         180,
         220,
         'https://images.cloudmarketplace.dev/flat-white.png',
-        '{"ingredients":[{"name":"espresso","calories":5},{"name":"milk","calories":60}]}',
+        '{"attributes":[{"name":"espresso","calories":5},{"name":"milk","calories":60}]}',
         '2024-03-01 09:00:00',
         '2024-03-01 09:00:00'
     ),
@@ -30,7 +30,7 @@ INSERT INTO menu_items (
         120,
         300,
         'https://images.cloudmarketplace.dev/berry-smoothie.png',
-        '{"ingredients":[{"name":"strawberry","calories":30},{"name":"blueberry","calories":25},{"name":"yogurt","calories":80}]}',
+        '{"attributes":[{"name":"strawberry","calories":30},{"name":"blueberry","calories":25},{"name":"yogurt","calories":80}]}',
         '2024-03-01 09:05:00',
         '2024-03-01 09:05:00'
     ),
@@ -42,7 +42,7 @@ INSERT INTO menu_items (
         150,
         250,
         'https://images.cloudmarketplace.dev/matcha-latte.png',
-        '{"ingredients":[{"name":"matcha","calories":10},{"name":"milk","calories":70}]}',
+        '{"attributes":[{"name":"matcha","calories":10},{"name":"milk","calories":70}]}',
         '2024-03-01 09:10:00',
         '2024-03-01 09:10:00'
     ),
@@ -54,7 +54,7 @@ INSERT INTO menu_items (
         600,
         350,
         'https://images.cloudmarketplace.dev/quinoa-avocado-salad.png',
-        '{"ingredients":[{"name":"quinoa","calories":120},{"name":"avocado","calories":160},{"name":"tomatoes","calories":20}]}',
+        '{"attributes":[{"name":"quinoa","calories":120},{"name":"avocado","calories":160},{"name":"tomatoes","calories":20}]}',
         '2024-03-01 09:15:00',
         '2024-03-01 09:15:00'
     ),
@@ -66,7 +66,7 @@ INSERT INTO menu_items (
         500,
         320,
         'https://images.cloudmarketplace.dev/chickpea-salad.png',
-        '{"ingredients":[{"name":"chickpeas","calories":150},{"name":"feta","calories":100},{"name":"olives","calories":50}]}',
+        '{"attributes":[{"name":"chickpeas","calories":150},{"name":"feta","calories":100},{"name":"olives","calories":50}]}',
         '2024-03-01 09:20:00',
         '2024-03-01 09:20:00'
     ),
@@ -78,7 +78,7 @@ INSERT INTO menu_items (
         900,
         450,
         'https://images.cloudmarketplace.dev/beef-burger.png',
-        '{"ingredients":[{"name":"beef patty","calories":350},{"name":"cheddar","calories":120},{"name":"bun","calories":200}]}',
+        '{"attributes":[{"name":"beef patty","calories":350},{"name":"cheddar","calories":120},{"name":"bun","calories":200}]}',
         '2024-03-01 09:25:00',
         '2024-03-01 09:25:00'
     );

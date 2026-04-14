@@ -50,7 +50,7 @@ public class MenuItem {
     private long preparationTime;
 
     @Column(name = "weight", nullable = false)
-    private double weight;
+    private Double weight;
 
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
