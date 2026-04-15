@@ -75,5 +75,16 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+
+	// Подробный вывод результатов тестов
+	testLogging {
+		events "passed", "skipped", "failed", "standardOut", "standardError"
+		exceptionFormat "full"       // Показывает полный стек исключения
+		showExceptions true
+		showCauses true
+		showStackTraces true
+		showStandardStreams true     // Показывает System.out и System.err
+	}
+
 	environment "TESTCONTAINERS_RYUK_DISABLED", "true"
 }
