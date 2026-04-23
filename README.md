@@ -2,11 +2,9 @@
 
 ## Overview
 
-**Cloud Marketplace Menu Service** is a RESTful microservice responsible for managing menu items within a cloud-based
-marketplace system.
+Cloud Marketplace Menu Service is a RESTful microservice responsible for managing menu items within a cloud-based marketplace system.
 
-The service provides CRUD operations, validation, sorting, and structured error handling, and is designed as part of a
-larger microservices ecosystem.
+The service provides CRUD operations, validation, sorting, and structured error handling. It is designed as part of a larger microservices ecosystem.
 
 ## Architecture
 
@@ -16,90 +14,180 @@ The service follows a layered architecture:
 Controller → Service → Repository → Database
 ```
 
-### Key components:
+### Components
 
-* **Controller layer** — REST API endpoints
-* **Service layer** — business logic and orchestration
-* **Repository layer** — data access via Spring Data JPA
-* **Database** — PostgreSQL with JSONB support
+* Controller — REST API endpoints
+* Service — business logic
+* Repository — data access (Spring Data JPA)
+* Database — PostgreSQL (JSONB support)
 
 ## Tech Stack
 
-* **Java 21**
-* **Spring Boot 3**
+* Java 21
+* Spring Boot 3 (Web, Data JPA, Validation, Actuator)
+* Hibernate 6
+* PostgreSQL 16
+* Flyway
+* MapStruct
+* Lombok
+* Hypersistence Utils (JSONB)
+* Docker Compose
+* OpenAPI (springdoc)
 
-    * Spring Web
-    * Spring Data JPA
-    * Spring Validation
-    * Spring Actuator
-* **Hibernate 6**
-* **PostgreSQL 16**
-* **Flyway** (database migrations)
-* **MapStruct** (DTO mapping)
-* **Lombok**
-* **Hypersistence Utils** (JSONB support)
-* **Testcontainers** (integration testing)
-* **Docker Compose**
-* **OpenAPI (springdoc)**
+Note: Testcontainers is present in the project but is not used for application tests. It is only used in isolated infrastructure checks.
 
 ## Features
 
 * CRUD operations for menu items
-* Category-based filtering
-* Sorting (price, name, created date)
-* JSONB-based attributes storage
-* Request validation (Bean Validation + custom constraints)
-* Centralized exception handling (RFC 7807 / ProblemDetail)
-* Integration testing with real PostgreSQL (Testcontainers)
+* Category filtering
+* Sorting (price, name, creation date)
+* JSONB attributes storage
+* Request validation
+* Centralized error handling (RFC 7807 / ProblemDetail)
 
 ## Running the Application
 
-### 1. Start PostgreSQL via Docker
+### Start PostgreSQL
 
-```bash
+```
 docker-compose up -d
 ```
 
-### 2. Run the application
+### Run the application
 
-```bash
+```
 ./gradlew bootRun
 ```
 
-### 3. Application will be available at:
+Application will be available at:
 
 ```
 http://localhost:8080
 ```
 
+## Testing
+
+The project uses a layered testing approach with different levels of isolation.
+
+### Controller tests
+
+Location: `controller/MenuItemControllerTest`
+
+* Uses MockMvc
+* Tests request mapping, validation, and exception handling
+* Does not involve database or real services
+
+```
+HTTP (mock) → Controller → mock Service
+```
+
+### Integration tests (API)
+
+Location: `controller/MenuItemControllerIT`
+
+* Uses WebTestClient
+* Runs full application context
+* Executes real HTTP requests
+
+```
+HTTP → Controller → Service → Repository → PostgreSQL
+```
+
+### Service tests
+
+Location: `service/MenuItemServiceTest`
+
+* Uses SpringBootTest
+* Executes business logic against real database
+* Test data managed via SQL scripts
+
+### Repository tests
+
+Location: `repository/MenuItemRepositoryTest`
+
+* Uses DataJpaTest
+* Verifies custom queries, sorting, and update logic
+
+### Infrastructure tests
+
+* DockerAvailabilityTest — checks Docker and Testcontainers availability
+* RepositoryInfrastructureTest — validates datasource and persistence configuration
+
+These tests are isolated and do not affect the main test flow.
+
+## Test Database
+
+Tests use a PostgreSQL instance started via Docker Compose:
+
+```
+localhost:15432
+```
+
+Test data is managed using SQL scripts:
+
+* insert-menu-items.sql
+* clear-menu-items.sql
+
 ## Running Tests
 
-### Run all tests:
+### Start database
 
-```bash
+```
+docker-compose up -d
+```
+
+### Run all tests
+
+```
 ./gradlew test
 ```
 
-### Integration tests use Testcontainers:
+### Run specific groups
+
+Controller tests:
+
+```
+./gradlew test --tests "*MenuItemControllerTest"
+```
+
+Integration tests:
+
+```
+./gradlew test --tests "*MenuItemControllerIT"
+```
+
+Service tests:
+
+```
+./gradlew test --tests "*ServiceTest"
+```
+
+Repository tests:
+
+```
+./gradlew test --tests "*RepositoryTest"
+```
+
+## Notes
 
 * Docker must be running
-* PostgreSQL container will be started automatically
+* PostgreSQL must be available on localhost:15432
+* Integration, service, and repository tests depend on this database
+* Testcontainers is not used for application tests
 
 ## Example API
 
-### Get menu items by category
-
-```http
-GET /api/menu-items?category=MAIN_DISH&sort=price_asc
+```
+GET /api/menu-items?category=DRINKS&sort=price_asc
 ```
 
 ## Error Handling
 
-The service uses **RFC 7807 (Problem Details for HTTP APIs)**.
+The service follows RFC 7807 (Problem Details).
 
 Example response:
 
-```json
+```
 {
   "status": 400,
   "detail": "Validation failed",
@@ -111,12 +199,10 @@ Example response:
 
 ## Docker
 
-PostgreSQL is configured via `docker-compose.yml`.
-
-Default port:
+PostgreSQL is configured via docker-compose.yml
 
 ```
-15432 → 5432 (container)
+15432 → 5432
 ```
 
 ## License
