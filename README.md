@@ -241,11 +241,23 @@ Build the application JAR (skip tests):
 ./gradlew clean build -x test
 ```
 
+Note:
+
+```
+jar {
+    enabled = false
+}
+```
+
+This disables plain JAR generation and ensures only a Spring Boot fat JAR is produced.
+
 Build Docker image:
 
 ```
 docker build -t menu-service .
 ```
+
+The project uses a multi-stage Dockerfile with layered JAR support to optimize build caching and reduce rebuild time.
 
 Start services:
 
@@ -266,11 +278,19 @@ View logs:
 docker logs -f menu-service
 ```
 
-Stop services:
+Stop containers:
 
 ```
 docker compose down
 ```
+
+## Docker Optimization Notes
+
+The Docker image is built using a multi-stage approach:
+- First stage extracts Spring Boot layered JAR
+- Second stage assembles runtime image using separated layers
+
+This allows Docker to reuse cached layers when dependencies do not change, significantly speeding up rebuilds.
 
 ## Notes on Docker setup
 
