@@ -2,9 +2,11 @@
 
 ## Overview
 
-Cloud Marketplace Menu Service is a RESTful microservice responsible for managing menu items within a cloud-based marketplace system.
+Cloud Marketplace Menu Service is a RESTful microservice responsible for managing menu items within a cloud-based
+marketplace system.
 
-The service provides CRUD operations, validation, sorting, and structured error handling. It is designed as part of a larger microservices ecosystem.
+The service provides CRUD operations, validation, sorting, and structured error handling. It is designed as part of a
+larger microservices ecosystem.
 
 ## Architecture
 
@@ -34,7 +36,8 @@ Controller → Service → Repository → Database
 * Docker Compose
 * OpenAPI (springdoc)
 
-Note: Testcontainers is present in the project but is not used for application tests. It is only used in isolated infrastructure checks.
+Note: Testcontainers is present in the project but is not used for application tests. It is only used in isolated
+infrastructure checks.
 
 ## Features
 
@@ -181,6 +184,39 @@ Repository tests:
 GET /api/menu-items?category=DRINKS&sort=price_asc
 ```
 
+Example request:
+
+```
+curl http://localhost:9091/api/menu-items?category=drinks
+```
+
+Example response:
+
+```
+[
+  {
+    "id": 1,
+    "name": "Latte",
+    "description": "Coffee",
+    "price": 5.00,
+    "category": "drinks",
+    "preparationTime": 120,
+    "weight": 200.0,
+    "imageUrl": "https://images.cloudmarketplace.dev/latte.png",
+    "createdAt": "2026-04-23T16:02:17.18984",
+    "updatedAt": "2026-04-23T16:02:17.189941",
+    "attributes": {
+      "attributes": [
+        { "name": "Milk", "calories": 100 },
+        { "name": "Coffee", "calories": 50 }
+      ]
+    }
+  }
+]
+```
+
+Returns all menu items in the "drinks" category sorted by default (name_asc).
+
 ## Error Handling
 
 The service follows RFC 7807 (Problem Details).
@@ -197,13 +233,51 @@ Example response:
 }
 ```
 
-## Docker
+## Running with Docker
 
-PostgreSQL is configured via docker-compose.yml
+Build the application JAR (skip tests):
 
 ```
-15432 → 5432
+./gradlew clean build -x test
 ```
+
+Build Docker image:
+
+```
+docker build -t menu-service .
+```
+
+Start services:
+
+```
+cd docker
+docker compose up -d
+```
+
+Check running containers:
+
+```
+docker ps
+```
+
+View logs:
+
+```
+docker logs -f menu-service
+```
+
+Stop services:
+
+```
+docker compose down
+```
+
+## Notes on Docker setup
+
+- The service runs inside Docker on port 9091
+- PostgreSQL is available via container hostname postgres
+- `SPRING_DATASOURCE_URL` is overridden for container networking
+- Docker Compose can either: use a pre-built image (`image:`) or build it automatically (`build:`)
 
 ## License
 
