@@ -1,91 +1,98 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.2.5'
-	id 'io.spring.dependency-management' version '1.1.5'
+    id 'java'
+    id 'org.springframework.boot' version '3.2.5'
+    id 'io.spring.dependency-management' version '1.1.5'
 }
 
 group = 'dev.abykov.cloudmarketplace'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_21
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 ext {
-	hypersistenceVersion = '3.7.5'
-	mapstructVersion = '1.5.5.Final'
-	mapstructLombokBindingVersion = '0.2.0'
-	springdocVersion = '2.5.0'
-	testcontainersVersion = '2.0.3'
+    hypersistenceVersion = '3.7.5'
+    mapstructVersion = '1.5.5.Final'
+    mapstructLombokBindingVersion = '0.2.0'
+    springdocVersion = '2.5.0'
+    testcontainersVersion = '2.0.3'
 }
 
 dependencyManagement {
-	imports {
-		mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
-	}
+    imports {
+        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+    }
+}
+
+jar {
+    // Disable plain JAR generation.
+    // We only need Spring Boot fat JAR (bootJar), which includes all dependencies
+    // and is required for running the application inside Docker.
+    enabled = false
 }
 
 dependencies {
-	// -------------------- Spring Boot --------------------
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // -------------------- Spring Boot --------------------
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-	// -------------------- Database --------------------
-	implementation 'org.flywaydb:flyway-core'
-	runtimeOnly 'org.postgresql:postgresql'
+    // -------------------- Database --------------------
+    implementation 'org.flywaydb:flyway-core'
+    runtimeOnly 'org.postgresql:postgresql'
 
-	// -------------------- JSONB --------------------
-	implementation "io.hypersistence:hypersistence-utils-hibernate-63:${hypersistenceVersion}"
+    // -------------------- JSONB --------------------
+    implementation "io.hypersistence:hypersistence-utils-hibernate-63:${hypersistenceVersion}"
 
-	// -------------------- MapStruct --------------------
-	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
-	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
-	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${mapstructLombokBindingVersion}"
+    // -------------------- MapStruct --------------------
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${mapstructLombokBindingVersion}"
 
-	// -------------------- Lombok --------------------
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    // -------------------- Lombok --------------------
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-	// -------------------- JPA Static Metamodel --------------------
-	annotationProcessor "org.hibernate.orm:hibernate-jpamodelgen"
+    // -------------------- JPA Static Metamodel --------------------
+    annotationProcessor "org.hibernate.orm:hibernate-jpamodelgen"
 
-	// -------------------- OpenAPI --------------------
-	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}"
+    // -------------------- OpenAPI --------------------
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}"
 
-	// -------------------- Testing --------------------
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-	testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
+    // -------------------- Testing --------------------
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-	// Явно указываем модули Testcontainers (версии берутся из BOM)
-	testImplementation 'org.testcontainers:junit-jupiter'
-	testImplementation 'org.testcontainers:postgresql'
+    // Явно указываем модули Testcontainers (версии берутся из BOM)
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 
-	// Подробный вывод результатов тестов
-	testLogging {
-		events "passed", "skipped", "failed", "standardOut", "standardError"
-		exceptionFormat "full"       // Показывает полный стек исключения
-		showExceptions true
-		showCauses true
-		showStackTraces true
-		showStandardStreams true     // Показывает System.out и System.err
-	}
+    // Подробный вывод результатов тестов
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+        exceptionFormat "full"       // Показывает полный стек исключения
+        showExceptions true
+        showCauses true
+        showStackTraces true
+        showStandardStreams true     // Показывает System.out и System.err
+    }
 
-	environment "TESTCONTAINERS_RYUK_DISABLED", "true"
+    environment "TESTCONTAINERS_RYUK_DISABLED", "true"
 }

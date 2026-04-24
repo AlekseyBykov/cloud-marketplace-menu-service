@@ -14,12 +14,33 @@ services:
       - ./postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d menu_service_db"]
+      test: [ "CMD-SHELL", "pg_isready -U user -d menu_service_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 20s
     restart: unless-stopped
+
+  # Menu service container
+  # NOTE:
+  # - Image can be built manually via:
+  #     docker build -t menu-service .
+  # - Or automatically via `build: .` (used here for convenience)
+  # - Service depends on PostgreSQL and waits until it becomes healthy
+  # Alternative: use pre-built image instead of build
+  # image: menu-service
+  menu-service:
+    build: ..
+    container_name: menu-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "9091:9091"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/menu_service_db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
 
 volumes:
   postgres_data:
