@@ -1,9 +1,6 @@
 package dev.abykov.cloudmarketplace.menu.controller;
 
-import dev.abykov.cloudmarketplace.menu.dto.CreateMenuItemRequest;
-import dev.abykov.cloudmarketplace.menu.dto.MenuItemResponse;
-import dev.abykov.cloudmarketplace.menu.dto.MenuItemSort;
-import dev.abykov.cloudmarketplace.menu.dto.UpdateMenuItemRequest;
+import dev.abykov.cloudmarketplace.menu.dto.*;
 import dev.abykov.cloudmarketplace.menu.entity.Category;
 import dev.abykov.cloudmarketplace.menu.service.MenuItemService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -158,5 +155,27 @@ public class MenuItemController {
                 Category.fromString(category),
                 MenuItemSort.fromString(sort)
         );
+    }
+
+    @Operation(
+            summary = "Resolve menu items for order",
+            description = "Returns availability and price information for a list of menu item names. " +
+                    "If a menu item does not exist, it is returned with available=false."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Menu items resolved successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Request validation failed (e.g. empty list of names)",
+                    content = @Content(schema = @Schema(implementation = ProblemDetail.class))
+            )
+    })
+    @PostMapping("/resolve")
+    public OrderMenuResponse resolveMenuItems(@RequestBody @Valid OrderMenuRequest request) {
+        log.info("Received request to GET info for menu with names: {}", request.getMenuNames());
+        return menuItemService.resolveMenuItems(request);
     }
 }
