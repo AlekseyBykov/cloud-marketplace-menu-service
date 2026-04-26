@@ -1,6 +1,6 @@
-# Cloud Marketplace Menu Service
+## Cloud Marketplace Menu Service
 
-## Overview
+### Overview
 
 Cloud Marketplace Menu Service is a RESTful microservice responsible for managing menu items within a cloud-based
 marketplace system.
@@ -8,7 +8,7 @@ marketplace system.
 The service provides CRUD operations, validation, sorting, and structured error handling. It is designed as part of a
 larger microservices ecosystem.
 
-## Architecture
+### Architecture
 
 The service follows a layered architecture:
 
@@ -16,14 +16,14 @@ The service follows a layered architecture:
 Controller → Service → Repository → Database
 ```
 
-### Components
+#### Components
 
 * Controller — REST API endpoints
 * Service — business logic
 * Repository — data access (Spring Data JPA)
 * Database — PostgreSQL (JSONB support)
 
-## Tech Stack
+### Tech Stack
 
 * Java 21
 * Spring Boot 3 (Web, Data JPA, Validation, Actuator)
@@ -39,7 +39,7 @@ Controller → Service → Repository → Database
 Note: Testcontainers is present in the project but is not used for application tests. It is only used in isolated
 infrastructure checks.
 
-## Features
+### Features
 
 * CRUD operations for menu items
 * Category filtering
@@ -48,137 +48,54 @@ infrastructure checks.
 * Request validation
 * Centralized error handling (RFC 7807 / ProblemDetail)
 
-## Running the Application
+### Running the Application
 
-### Start PostgreSQL
+There are two ways to run the service.
 
-```
-docker-compose up -d
-```
+**1. Local development mode**
 
-### Run the application
+Runs the application directly on the host:
 
 ```
+docker compose up -d
 ./gradlew bootRun
+docker compose down
 ```
 
-Application will be available at:
+- Application runs on `localhost:8080`
+- Uses PostgreSQL from Docker
+
+**2. Docker mode**
+
+Runs the full application stack in containers:
 
 ```
-http://localhost:8080
+./gradlew clean build -x test
+docker build -t menu-service .
+
+cd docker
+docker compose up -d
+docker logs -f menu-service
+docker compose down
 ```
 
-## Testing
+- Application runs on `localhost:9091`
+- Uses internal Docker network (`postgres` hostname)
 
-The project uses a layered testing approach with different levels of isolation.
-
-### Controller tests
-
-Location: `controller/MenuItemControllerTest`
-
-* Uses MockMvc
-* Tests request mapping, validation, and exception handling
-* Does not involve database or real services
+**Notes**
 
 ```
-HTTP (mock) → Controller → mock Service
+jar {
+    enabled = false
+}
 ```
 
-### Integration tests (API)
+- this disables plain JAR generation and ensures only a Spring Boot fat JAR is produced.
 
-Location: `controller/MenuItemControllerIT`
+`docker build -t menu-service .` - the project uses a multi-stage Dockerfile with layered JAR support to optimize build
+caching and reduce rebuild time.
 
-* Uses WebTestClient
-* Runs full application context
-* Executes real HTTP requests
-
-```
-HTTP → Controller → Service → Repository → PostgreSQL
-```
-
-### Service tests
-
-Location: `service/MenuItemServiceTest`
-
-* Uses SpringBootTest
-* Executes business logic against real database
-* Test data managed via SQL scripts
-
-### Repository tests
-
-Location: `repository/MenuItemRepositoryTest`
-
-* Uses DataJpaTest
-* Verifies custom queries, sorting, and update logic
-
-### Infrastructure tests
-
-* DockerAvailabilityTest — checks Docker and Testcontainers availability
-* RepositoryInfrastructureTest — validates datasource and persistence configuration
-
-These tests are isolated and do not affect the main test flow.
-
-## Test Database
-
-Tests use a PostgreSQL instance started via Docker Compose:
-
-```
-localhost:15432
-```
-
-Test data is managed using SQL scripts:
-
-* insert-menu-items.sql
-* clear-menu-items.sql
-
-## Running Tests
-
-### Start database
-
-```
-docker-compose up -d
-```
-
-### Run all tests
-
-```
-./gradlew test
-```
-
-### Run specific groups
-
-Controller tests:
-
-```
-./gradlew test --tests "*MenuItemControllerTest"
-```
-
-Integration tests:
-
-```
-./gradlew test --tests "*MenuItemControllerIT"
-```
-
-Service tests:
-
-```
-./gradlew test --tests "*ServiceTest"
-```
-
-Repository tests:
-
-```
-./gradlew test --tests "*RepositoryTest"
-```
-
-## Notes
-
-* Docker must be running
-* PostgreSQL must be available on localhost:15432
-* Integration, service, and repository tests depend on this database
-* Testcontainers is not used for application tests
-
-## Example API
+**Example API**
 
 ```
 GET /api/menu-items?category=DRINKS&sort=price_asc
@@ -217,7 +134,7 @@ Example response:
 
 Returns all menu items in the "drinks" category sorted by default (name_asc).
 
-## Error Handling
+**Error Handling**
 
 The service follows RFC 7807 (Problem Details).
 
@@ -233,72 +150,123 @@ Example response:
 }
 ```
 
-## Running with Docker
+### Testing
 
-Build the application JAR (skip tests):
+The project uses a layered testing approach with different levels of isolation.
 
-```
-./gradlew clean build -x test
-```
+**Controller tests**
 
-Note:
+Location: `controller/MenuItemControllerTest`
 
-```
-jar {
-    enabled = false
-}
-```
-
-This disables plain JAR generation and ensures only a Spring Boot fat JAR is produced.
-
-Build Docker image:
+* Uses MockMvc
+* Tests request mapping, validation, and exception handling
+* Does not involve database or real services
 
 ```
-docker build -t menu-service .
+HTTP (mock) → Controller → mock Service
 ```
 
-The project uses a multi-stage Dockerfile with layered JAR support to optimize build caching and reduce rebuild time.
+**Integration tests (API)**
 
-Start services:
+Location: `controller/MenuItemControllerIT`
 
-```
-cd docker
-docker compose up -d
-```
-
-Check running containers:
+* Uses WebTestClient
+* Runs full application context
+* Executes real HTTP requests
 
 ```
-docker ps
+HTTP → Controller → Service → Repository → PostgreSQL
 ```
 
-View logs:
+**Service tests**
+
+Location: `service/MenuItemServiceTest`
+
+* Uses SpringBootTest
+* Executes business logic against real database
+* Test data managed via SQL scripts
+
+**Repository tests**
+
+Location: `repository/MenuItemRepositoryTest`
+
+* Uses DataJpaTest
+* Verifies custom queries, sorting, and update logic
+
+**Infrastructure tests**
+
+* DockerAvailabilityTest — checks Docker and Testcontainers availability
+* RepositoryInfrastructureTest — validates datasource and persistence configuration
+
+These tests are isolated and do not affect the main test flow.
+
+Tests use a PostgreSQL instance started via Docker Compose:
 
 ```
-docker logs -f menu-service
+localhost:15432
 ```
 
-Stop containers:
+Test data is managed using SQL scripts:
+
+* insert-menu-items.sql
+* clear-menu-items.sql
+
+### Running Tests
+
+**Start database**
 
 ```
-docker compose down
+docker-compose up -d
 ```
 
-## Docker Optimization Notes
+**Run all tests**
+
+```
+./gradlew test
+```
+
+**Run specific groups**
+
+Controller tests:
+
+```
+./gradlew test --tests "*MenuItemControllerTest"
+```
+
+Integration tests:
+
+```
+./gradlew test --tests "*MenuItemControllerIT"
+```
+
+Service tests:
+
+```
+./gradlew test --tests "*ServiceTest"
+```
+
+Repository tests:
+
+```
+./gradlew test --tests "*RepositoryTest"
+```
+
+### Docker Optimization Notes
 
 The Docker image is built using a multi-stage approach:
+
 - First stage extracts Spring Boot layered JAR
 - Second stage assembles runtime image using separated layers
 
 This allows Docker to reuse cached layers when dependencies do not change, significantly speeding up rebuilds.
 
-## Notes on Docker setup
+### Notes on Docker setup
 
 - The service runs inside Docker on port 9091
 - PostgreSQL is available via container hostname postgres
 - `SPRING_DATASOURCE_URL` is overridden for container networking
 - Docker Compose can either: use a pre-built image (`image:`) or build it automatically (`build:`)
 
-## License
+### License
 
 MIT License
