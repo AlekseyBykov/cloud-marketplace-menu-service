@@ -2,11 +2,19 @@
 
 ### Overview
 
-Cloud Marketplace Menu Service is a RESTful microservice responsible for managing menu items within a cloud-based
-marketplace system.
+Menu Service is a Java-based microservice responsible for managing menu items and providing menu information to other
+services within the Cloud Marketplace application.
 
-The service provides CRUD operations, validation, sorting, and structured error handling. It is designed as part of a
-larger microservices ecosystem.
+It supports menu management, filtering, sorting, validation, and batch resolution of menu items for order processing.
+
+The service is developed as part of a personal project focused on backend engineering, microservices architecture, and
+practical experience with the Spring ecosystem.
+
+**Project links:**
+
+- [Cloud Marketplace — Main Repository](https://github.com/AlekseyBykov/cloud-marketplace)
+- [Development Board](https://github.com/users/AlekseyBykov/projects/2)
+- [Orders Service](https://github.com/AlekseyBykov/cloud-marketplace-orders-service)
 
 ### Architecture
 
@@ -25,16 +33,24 @@ Controller → Service → Repository → Database
 
 ### Tech Stack
 
-* Java 21
-* Spring Boot 3 (Web, Data JPA, Validation, Actuator)
-* Hibernate 6
-* PostgreSQL 16
-* Flyway
-* MapStruct
-* Lombok
-* Hypersistence Utils (JSONB)
-* Docker Compose
-* OpenAPI (springdoc)
+| Component           | Technology                                      |
+|---------------------|-------------------------------------------------|
+| Language            | Java 21                                         |
+| Framework           | Spring Boot 3                                   |
+| Web                 | Spring MVC                                      |
+| Persistence         | Spring Data JPA, Hibernate 6                    |
+| Database            | PostgreSQL 16                                   |
+| Database migrations | Flyway                                          |
+| Mapping             | MapStruct                                       |
+| Validation          | Jakarta Bean Validation                         |
+| JSONB support       | Hypersistence Utils                             |
+| API documentation   | springdoc OpenAPI                               |
+| Build               | Gradle                                          |
+| Infrastructure      | Docker, Docker Compose                          |
+| CI                  | GitHub Actions                                  |
+| Testing             | JUnit 5, MockMvc, WebTestClient, Testcontainers |
+
+Lombok and Spring Boot Actuator are also used.
 
 Note: Testcontainers is present in the project but is not used for application tests. It is only used in isolated
 infrastructure checks.
@@ -134,13 +150,13 @@ Example response:
 
 Returns all menu items in the "drinks" category sorted by default (name_asc).
 
-**Error Handling**
+### Error Handling
 
-The service follows RFC 7807 (Problem Details).
+The service uses Spring `ProblemDetail` for structured HTTP error responses following RFC 7807 conventions.
 
-Example response:
+Example validation response:
 
-```
+```json
 {
   "status": 400,
   "detail": "Validation failed",
@@ -267,6 +283,23 @@ This allows Docker to reuse cached layers when dependencies do not change, signi
 - `SPRING_DATASOURCE_URL` is overridden for container networking
 - Docker Compose can either: use a pre-built image (`image:`) or build it automatically (`build:`)
 
+### Development
+
+Development is organized around GitHub Issues, pull requests, and automated build checks.
+
+The [Cloud Marketplace Development Board](https://github.com/users/AlekseyBykov/projects/2) tracks completed work and
+planned improvements across the services.
+
+Further architectural development is coordinated through
+the [main repository](https://github.com/AlekseyBykov/cloud-marketplace).
+
+### Project Background
+
+Cloud Marketplace was initially inspired by the [JavaOps](https://javaops.ru/) training program.
+
+The project is being developed further as a personal engineering initiative, with an emphasis on understanding
+architectural decisions, exploring implementation alternatives, and extending the system beyond its initial scope.
+
 ### License
 
-MIT License
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
